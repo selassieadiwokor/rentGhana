@@ -1,0 +1,116 @@
+{
+    "def":{
+        "type": "base",
+        "appcast": "LUW13",
+        "appname": "Lab Charges",
+        "apptable": "tb_investigation",
+        "primid": "invid",
+        "primask": "invmask",
+        "primname": "invname",
+        "orderby": {"invname":"asc"},
+        "alias": "inv",
+        "inventry":{"0":"Unknown","1":"Number","2":"Short text","3":"Long text","4":"Template","5":"Select Option"},
+        "policyonly":{"0":"Unknown","1":"No","2":"Yes"},
+        "limit": 10,
+        "display": {"columns":"two", "view":"twoSenFivView", "one":"tableVw", "two":""},
+        "methods": ["newinv", "viewinv", "editinv", "statusinv", "defappget", "defmenuxcget",
+                    "updinv", "delinv", "pageinv", "trashinv", "searchinv"
+                   ],
+        "status": {
+            "field": "invstatus",
+            "trashstatus": 3,
+            "activestatus": 1,
+            "trashaction": "trashinv",
+            "name":  {"0":"Inactive","1":"Active","2":"Disabled","3":"Deleted","4":"Archived"},
+            "methods":{"0":"Inactive","1":"Active","2":"Disabled","3":"Deleted","4":"Archived"},
+            "color": {"0":"#6c7177","1":"#00adeb","2":"#5b3c17","3":"#5d2c68","4":"#c65b20"},
+            "class": {"0":"bg-primary","1":"bg-info","2":"bg-gray","3":"bg-danger","4":"bg-brown"}
+        }
+    },
+    "view":{
+        "tablevw": {
+            "heads":{"0":"Name", "1":"Category", "2":"Price", "3":"Policy", "4":"Status","5":"Actions"},
+            "column":{"0":"inv.invname", "1":"inv.categoryid, def.definitioname categoryname,inv.subcategoryid,subcat.definitioname",  "2":"inv.defaultprice", 
+                      "3":"inv.policyonly, case inv.policyonly when 2 then 'Yes' else 'No' end",  "4":"inv.invstatus","5":"inv.invmask"},
+            "alias":{"0":"invname", "1":"subcategoryidlab", "2":"defaultprice", "3":"policyonlylab",   "4":"invstatus","5":"invmask"},
+            "prepdisplay":{"0":"", "1":"","2":"","3":"", "4":"tablestatus","5":"actions"},
+            "search":{"0":"inv.invname","1":"subcat.definitioname"}
+        },
+        "policyvw":{
+                "labels":{"0":"Default Price"},
+                "column":{"0":"inv.invname,inv.defaultprice"},  
+                "alias":{"0":"defaultprice"},
+                "prepdisplay":{"0":""}
+        },
+       "detailvw": {
+            "labels":{"0":"Inv ID","1":"Name","2":"Category","3":"Price","4":"Policy Only","5":"Policy Name","6":"Folder Upload", "7":"Entry","8":"Icd Code","9":"Created","10":"Status"},
+            "column":{"0":"inv.invmask","1":"inv.invname",
+                      "2":"inv.categoryid, def.definitioname categoryname,inv.subcategoryid,subcat.definitioname", "3":"inv.defaultprice",
+                      "4":"inv.policyonly, case inv.policyonly when 2 then 'Yes' else 'No' end",
+                      "5":"inv.policyonlyid,pol.policyname","6":"inv.folderupload, case inv.folderupload when 3 then 'Scan Images' when 2 then 'Dicom Files' else 'No' end",
+                      "7":"inv.inventry, case inv.inventry when 1 then 'Number' when 2 then 'Short text' when 3 then 'Long text' when 4 then 'Template' else 'Unknown' end ","8":"inv.icdcode","9":"cd.adminame","10":"inv.invstatus"},
+            "alias":{"0":"invmask","1":"invname", "2":"subcategoryidlab", "3":"defaultprice","4":"policyonlylab", "5":"policyonlyidlab", "6":"folderuploadlab", "7":"inventrylab","8":"icdcode","9":"createdbyname", "10":"invstatus"},
+            "prepdisplay":{"0":"","1":"","2":"","3":"","4":"","5":"","6":"","7":"ellipses","8":"","9":"","10":"vwtablestatus"}
+        },
+        "tablejoin": [
+            { "name": "bt_app_definition", "alias": "subcat", "myjoin" : "definitionid", "nxjoin" : "inv.subcategoryid" },
+            { "name": "bt_app_definition", "alias": "def", "myjoin" : "definitionid", "nxjoin" : "inv.categoryid" },
+            { "name": "tb_policy", "alias": "pol", "myjoin" : "policyid", "nxjoin" : "inv.policyonlyid" },
+            { "name": "bt_admin", "alias": "cd", "myjoin" : "adminid", "nxjoin" : "inv.createdby" },
+            { "name": "bt_admin", "alias": "ud", "myjoin" : "adminid", "nxjoin" : "inv.updatedby" }
+        ],
+        "counts":[
+            {"table":"bt_table","alias":"a","column":"inv.tableid", "where":"inv.appid", "whereval":"appid"}
+        ],
+        "actions":{
+                "name":{"0":"View", "5":"View Policy","6":"Edit Policy"},
+                "action":{"0":"viewinv", "5":"viewpolicychg","6":"editpolicychg"},
+                "icon":{"0":"fa-eye", "5":"fa-bars","6":"fa-arrows"},
+                "class":{"0":"btn-dark", "5":"btn-primary","6":"btn-success"},
+                "color":{"0":"View","1":"Edit","3":"Status","4":"Trash App","5":"View Policy","6":"Edit Policy"}
+        }
+    },
+    "form":{
+        "formvw": {
+            "label":{"0":"Category", "1":"Policy Only", "2":"Select Policy","3":"Name", "4":"Price", "5":"Result Type", "6":"Icd Code"},
+            "name":{"0":"categoryid","1":"policyonly", "2":"policyonlyid", "3":"invname", "4":"defaultprice", "5":"inventry", "6":"icdcode"},
+            "table":{"0":"inv","1":"inv", "2":"inv", "3":"inv", "4":"inv", "5":"inv", "6":"inv"},
+            "type":{"0":"selectajax", "1":"selectdata", "2":"selectajax", "3":"text", "4":"float", "5":"selectdata", "6":"text"},
+            "dbtype":{"0":"int", "1":"int", "2":"int","3":"string", "4":"string", "5":"int", "6":"string"},
+            "column":{"0":"categoryid", "1":"policyonly", "2":"policyonlyid", "3":"invname", "4":"defaultprice", "5":"inventry", "6":"icdcode"},
+            "required":{"0":true,"1":"", "2":"", "3":"true", "4":"true", "5":"true", "6":""},
+            "unique":{"0":"definvcatget","1":"", "2":"defpolicyget", "3":"", "4":"", "5":"", "6":""},
+            "placeholder":{"0":"Select Menu", "1":"Policy Only", "2":"Policy name","3":"Select App", "4":"Enter App Link", "5":"Select Parent Menu", "6":"Icd Code"},
+            "error":{"0":"Problem with setup type","1":"", "2":"", "3":"Problem with definition name", "4":"", "5":"", "6":"Icd Code"},
+            "minval":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "maxval":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "equval":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "minlen":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "maxlen":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "equlen":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "disabled":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "readonly":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "val":{"0":"", "1":"1", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "isnumeric":{"0":"true", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""},
+            "isemail":{"0":"", "1":"", "2":"", "3":"", "4":"", "5":"", "6":""}
+        },
+        
+        "tableinsert": [
+             { "tablename": "tb_investigation", "alias":"inv", "primask":"invmask","primid":"invid",
+                 "autocolumn" : ["invmask"], 
+                 "passwdhash" : [],
+                 "autohash" : [],
+                 "externalcolumn":{} 
+            }
+        ],
+        "tableupdate": [
+             {"tablename":"tb_investigation","alias":"inv","passwdhash":[],"autohash":[]}
+        ],
+        "externalcolumn":[
+            {"table":"bt_table","alias":"b","columns":{}}
+        ],
+        "methods":{"formvw":"newinv","statusvw":"statusinv","editvw":"updinv","pagevw":"pageinv","searchvw":"searchinv"}
+        
+    }
+    }
+    
